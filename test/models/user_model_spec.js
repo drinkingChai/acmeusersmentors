@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
+const User = require('../../models').User;
 
 describe('User model', ()=> {
-
 	/*
 		- first step - creating and deleting users 
 		- second step - creating and deleting awards 
@@ -11,9 +11,33 @@ describe('User model', ()=> {
 		- a key part of this is removing a users mentees if their award count falls below 2.
 	*/
 
+	beforeEach(()=> {
+		let allUsers;
+		return User.sync()
+						.then(()=> User.seed())
+						.then(data => {
+
+						})
+	})
+
+
+	describe('User model exists', ()=> {
+		it('Expects the model to exist', ()=> {
+			expect(User).to.be.ok();
+		})
+	})
+
+
 	describe('Create and delete users', ()=> {
 		it('Creates an user', ()=> {
+			// User.createNewUser('Harry')
+			// 	.then(user=> {
+			// 		expect(user.name).to.be('Harry');
+			// 	})
+		})
 
+		it('Lists all users', ()=> {
+			
 		})
 
 		it('Delets an user', ()=> {
@@ -27,7 +51,11 @@ describe('User model', ()=> {
 
 		})
 
-		it('Delets an award', ()=> {
+		it('Lists all awards for a user', ()=> {
+
+		})
+
+		it('Deletes an award', ()=> {
 
 		})
 	})
@@ -39,6 +67,14 @@ describe('User model', ()=> {
 		})
 
 		it('Adds multiple mentors to a user', ()=> {
+
+		})
+
+		it('List all mentors', ()=> {
+
+		})
+
+		it('List all mentors for a user', ()=> {
 
 		})
 
@@ -63,7 +99,7 @@ describe('User model', ()=> {
 			})
 
 			it('Demotes if the user has less than 2 awards', ()=> {
-				
+
 			})
 		})
 	})
