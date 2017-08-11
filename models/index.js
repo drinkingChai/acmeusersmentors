@@ -2,7 +2,9 @@ const Sequelize = require('sequelize');
 const conn = new Sequelize(process.env.DATABASE_URL);
 
 
+const Page = conn.define('page', {
 
+})
 
 
 const sync = ()=> {
@@ -12,5 +14,8 @@ const sync = ()=> {
 
 
 module.exports = {
-	sync
+	sync,
+	models: {
+		Page
+	}
 };
