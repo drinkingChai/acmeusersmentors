@@ -5,8 +5,8 @@ const Award = conn.models.Award;
 
 describe('User model', ()=> {
 	/*
-		- first step - creating and deleting users 
-		- second step - creating and deleting awards 
+		- first step - creating and deleting users
+		- second step - creating and deleting awards
 		- third step - adding and removing mentors for a user
 		- only a user with 2 or more awards can be a mentor
 		- a user can not mentor themselves
@@ -20,7 +20,7 @@ describe('User model', ()=> {
 			.then(()=> User.findAll({ order: ['id'] }))
 			.then(users=> {
 				allUsers = users;
-				return Award.findAll()
+				return Award.findAll({ order: ['id'] })
 			}).then(awards=> {
 				allAwards = awards;
 			})
@@ -80,7 +80,7 @@ describe('User model', ()=> {
 		})
 
 		it('deletes an award', ()=> {
-			let user = allUsers[0],
+			let user = allUsers.filter(user=> user.name == 'Bob')[0],
 				userAwards = allAwards.filter(award=>user.id == award.userId);
 
 			return User.removeAward(user.id, userAwards[0].id)
@@ -95,11 +95,19 @@ describe('User model', ()=> {
 
 	describe('Add and remove mentors', ()=> {
 		it('assign a mentor to a user', ()=> {
-
+			return User.assignMentor(allUsers[0].id, allUsers[1].name)
+				.then(()=> User.findOne({ where: { id: allUsers[0].id }}))
+				.then(user=> {
+					expect(user.mentorId).to.equal(allUsers[1].id);
+					expect(user.mentorId).to.not.equal(allUsers[2].id);
+				});
 		})
 
 		it('list all mentors', ()=> {
-
+			return User.listMentors().then(mentors=> {
+				expect(mentors.length).to.equal(2);
+				expect(mentors.length).to.not.equal(3);
+			})
 		})
 
 		it('removes a mentor to a user', ()=> {
@@ -115,7 +123,7 @@ describe('User model', ()=> {
 	describe('Test business plan', ()=> {
 		describe('User', ()=> {
 			it('is a mentor', ()=> {
-				
+
 			})
 
 			it('remove mentor from user if mentor has less than 2 awards', ()=> {

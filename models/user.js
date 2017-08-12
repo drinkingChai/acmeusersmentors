@@ -6,13 +6,14 @@ const User = conn.define('user', {
 		type: conn.Sequelize.STRING,
 		allowNull: false
 	}
-}, {
-	isMentor() {
-		return Award.getAward(this).then(awards=> {
-			return awards.length >= 2 ? true : false;
-		})
-	}
 })
+
+User.prototype.isMentor = function () {
+	return Award.getAwards(this.id)
+		.then(awards=> {
+			return awards.length >= 2 ? this : false;
+		})
+};
 
 User.giveAward = id=> {
 	return User.findOne({ where: { id: id }}).then(user=> Award.createAward(user));
@@ -38,6 +39,14 @@ User.assignMentor = (menteeId, mentorName)=> {
 			return mentee.setMentor(mentor);
 		})
 	})
+}
+
+User.listMentors = ()=> {
+	return User.findAll()
+		.then(users=> Promise.all(users.map(user=> user.isMentor())))
+		.then(mentors=> {
+			return mentors.filter(mentor=> mentor);
+		})
 }
 
 

@@ -22,7 +22,7 @@ const seed = ()=> {
 			Award.createAward(users[0]),
 			Award.createAward(users[1]),
 			Award.createAward(users[1]),
-			Award.createAward(users[2])
+			Award.createAward(users[2]),
 		])
 	})
 }
