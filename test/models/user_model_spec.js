@@ -13,16 +13,22 @@ describe('User model', ()=> {
 		- a key part of this is removing a users mentees if their award count falls below 2.
 	*/
 
-	let allUsers, allAwards;
+	let allUsers, allAwards, bob, susan, lea,
+		bobsAwards, susansAwards;
 	beforeEach(()=> {
 		return conn.sync()
 			.then(()=> conn.seed())
 			.then(()=> User.findAll({ order: ['id'] }))
 			.then(users=> {
 				allUsers = users;
+				bob = allUsers.filter(user=> user.name == 'Bob')[0];
+				susan = allUsers.filter(user=> user.name == 'Susan')[0];
+				lea = allUsers.filter(user=> user.name =='Lea')[0];
 				return Award.findAll({ order: ['id'] })
 			}).then(awards=> {
 				allAwards = awards;
+				bobsAwards = awards.filter(award=> award.userId = bob.id);
+				susansAwards = awards.filter(award=> award.userId = susan.id);
 			})
 	})
 
@@ -64,8 +70,8 @@ describe('User model', ()=> {
 
 	describe('Create and delete awards', ()=> {
 		it('creates an award', ()=> {
-			return User.giveAward(allUsers[0].id)
-				.then(()=> Award.getAwards(allUsers[0].id))
+			return User.giveAward(bob.id)
+				.then(()=> Award.getAwards(bob.id))
 				.then(awards=> {
 					expect(awards.length).to.equal(3);
 					expect(awards.length).to.not.equal(1);
@@ -73,18 +79,15 @@ describe('User model', ()=> {
 		})
 
 		it('lists all awards for a user', ()=> {
-			return Award.getAwards(allUsers[0].id)
+			return Award.getAwards(bob.id)
 				.then(awards=> {
 					expect(awards.length).to.equal(2);
 				})
 		})
 
 		it('deletes an award', ()=> {
-			let user = allUsers.filter(user=> user.name == 'Bob')[0],
-				userAwards = allAwards.filter(award=>user.id == award.userId);
-
-			return User.removeAward(user.id, userAwards[0].id)
-				.then(()=> Award.getAwards(user.id))
+			return User.removeAward(bob.id, bobsAwards[0].id)
+				.then(()=> Award.getAwards(bob.id))
 				.then(awards=> {
 					expect(awards.length).to.equal(1);
 					expect(awards.length).to.not.equal(3);
@@ -95,11 +98,11 @@ describe('User model', ()=> {
 
 	describe('Add and remove mentors', ()=> {
 		it('assign a mentor to a user', ()=> {
-			return User.assignMentor(allUsers[0].id, allUsers[1].name)
-				.then(()=> User.findOne({ where: { id: allUsers[0].id }}))
+			return User.assignMentor(bob.id, susan.name)
+				.then(()=> User.findOne({ where: { id: bob.id }}))
 				.then(user=> {
-					expect(user.mentorId).to.equal(allUsers[1].id);
-					expect(user.mentorId).to.not.equal(allUsers[2].id);
+					expect(user.mentorId).to.equal(susan.id);
+					expect(user.mentorId).to.not.equal(lea.id);
 				});
 		})
 
@@ -111,11 +114,23 @@ describe('User model', ()=> {
 		})
 
 		it('removes a mentor to a user', ()=> {
-
+			let userId = bob.id
+			return User.assignMentor(userId, susan.name)
+				.then(()=> User.findOne({ where: { id: userId }}))
+				.then(user=> {
+					expect(user.mentorId).to.be.ok;
+					return User.removeMentor(userId)
+				})
+				.then(user=> {
+					expect(user.mentorId).to.be.null;
+				})
 		})
 
 		it("can't mentor themselves", ()=> {
-
+			return User.assignMentor(bob.id, bob.name)
+				.then(null, err=> {
+					expect(err).to.be.an('error');
+				})
 		})
 	})
 
@@ -123,11 +138,29 @@ describe('User model', ()=> {
 	describe('Test business plan', ()=> {
 		describe('User', ()=> {
 			it('is a mentor', ()=> {
-
+				return bob.isMentor()
+					.then(user=> {
+						expect(user).to.be.ok;
+					})
 			})
 
 			it('remove mentor from user if mentor has less than 2 awards', ()=> {
-
+				return Promise.all([
+					User.assignMentor(bob.id, susan.name),
+					User.assignMentor(lea.id, susan.name)
+				]).then(()=> User.findOne({ where: { id: bob.id }}))
+					.then(user=> {
+						expect(user.mentorId).to.equal(susan.id);
+					})
+					.then(()=> User.removeAward(susan.id, susansAwards[0].id))
+					.then(()=> User.findOne({ where: { id: bob.id }}))
+					.then(user=> {
+						expect(user.mentorId).to.be.null;
+					})
+					.then(()=> User.findOne({ where: { id: lea.id }}))
+					.then(user=> {
+						expect(user.mentorId).to.be.null;
+					})
 			})
 		})
 	})

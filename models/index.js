@@ -14,8 +14,8 @@ User.hasMany(User, { as: 'mentee', foreignKey: 'mentorId' });
 const seed = ()=> {
 	return Promise.all([
 		User.create({ name: 'Bob' }),
-		User.create({ name: 'Sweet' }),
-		User.create({ name: 'Lera' })
+		User.create({ name: 'Susan' }),
+		User.create({ name: 'Lea' })
 	]).then(users=> {
 		return Promise.all([
 			Award.createAward(users[0]),

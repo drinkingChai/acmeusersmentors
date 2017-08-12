@@ -36,9 +36,15 @@ User.removeAward = (userId, awardId)=> {
 User.assignMentor = (menteeId, mentorName)=> {
 	return User.findOne({ where: { id: menteeId }}).then(mentee=> {
 		return User.findOne({ where: { name: mentorName }}).then(mentor=> {
+			if (mentor.id == mentee.id) throw new Error('Cannot mentor themselves');
 			return mentee.setMentor(mentor);
 		})
 	})
+}
+
+User.removeMentor = id=> {
+	return User.findOne({ where: { id: id }})
+		.then(user=> user.setMentor(null))
 }
 
 User.listMentors = ()=> {
