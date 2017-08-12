@@ -8,17 +8,26 @@ const Award = conn.define('award', {
 	}
 })
 
-Award.createAward = (user)=> {
+Award.getAwards = user=> {
+	return this.findAll({ where: { userId: user.id }});
+}
+
+Award.createAward = user=> {
 	return Award.create({
 		phrase: faker.company.catchPhrase()
 	}).then(award=> {
-		award.setUser(user);
-	});
+		return award.setUser(user);
+	})
 }
 
-Award.deleteAward = (id)=> {
-	return Award.findOne({ where: { id: id }})
-		.then(award=> award.destroy());
+Award.deleteAward = id=> {
+	return Award.findOne({
+		where: { id: id }
+	}).then(award=> {
+		return award.destroy().then(()=> {
+			return Award.findAll({ where: { userId: award.userId }});
+		});
+	})
 }
 
 module.exports = Award;

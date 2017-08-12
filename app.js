@@ -21,9 +21,10 @@ app.use(users);
 
 const port = process.env.PORT || 3000;
 
-conn.sync()
-	.then(()=> {
-		app.listen(port, ()=> {
-			console.log(`listening on port ${port}`);
+conn.sync().then(()=> {
+		conn.seed().then(()=> {
+			app.listen(port, ()=> {
+				console.log(`listening on port ${port}`);
+			})
 		})
 	})

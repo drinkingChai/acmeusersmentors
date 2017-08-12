@@ -5,33 +5,42 @@ const User = conn.define('user', {
 	name: {
 		type: conn.Sequelize.STRING,
 		allowNull: false
-	},
-	isMentor: {
-		type: conn.Sequelize.BOOLEAN,
-		default: false,
-		allowNull: false
+	}
+}, {
+	isMentor() {
+		return Award.getAward(this).then(awards=> {
+			return awards.length >= 2 ? true : false;
+		})
 	}
 })
 
-User.prototype.addAward = ()=> {
-  return Award.createAward(this);
+User.giveAward = id=> {
+	return User.findOne({ where: { id: id }}).then(user=> {
+		Award.createAward(user);
+	})
 }
 
-User.createUser = (name)=> {
-  return this.create({ name: name })
+User.removeAward = (userId, awardId)=> {
+	return Award.deleteAward(awardId).then(awards=> {
+		if (awards.length < 2) {
+			return User.findAll({
+				where: { mentorId: userId },
+			});
+		}
+	}).then(mentees=> {
+		if (mentees && mentees.length) {
+			return Promise.all(mentees.map(mentee=> mentee.setMentor(null)))
+		}
+	})
 }
 
-User.promote = (id)=> {
-  return User.findOne({ where: { id: id }}).then(user=> {
-    Award.findAll({ where: { userId: id }}).then(awards=> {
-      if (awards.length >= 2) user.isMentor = true;
-    })
-  })
-};
-
-User.deleteUser = (id)=> {
-  return this.findOne({ where: { id: id }})
-    .then(record=> { record.destroy(); })
+User.assignMentor = (menteeId, mentorName)=> {
+	return User.findOne({ where: { id: menteeId }}).then(mentee=> {
+		return User.findOne({ where: { name: mentorName }}).then(mentor=> {
+			mentee.setMentor(mentor);
+		})
+	})
 }
+
 
 module.exports = User;
