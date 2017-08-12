@@ -13,17 +13,13 @@ describe('User model', ()=> {
 
 	beforeEach(()=> {
 		let allUsers;
-		return User.sync()
-						.then(()=> User.seed())
-						.then(data => {
-
-						})
+		return User.sync();
 	})
 
 
 	describe('User model exists', ()=> {
 		it('Expects the model to exist', ()=> {
-			expect(User).to.be.ok();
+			return expect(User).to.be.ok();
 		})
 	})
 
