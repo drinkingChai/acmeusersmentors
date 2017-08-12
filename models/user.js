@@ -15,9 +15,7 @@ const User = conn.define('user', {
 })
 
 User.giveAward = id=> {
-	return User.findOne({ where: { id: id }}).then(user=> {
-		Award.createAward(user);
-	})
+	return User.findOne({ where: { id: id }}).then(user=> Award.createAward(user));
 }
 
 User.removeAward = (userId, awardId)=> {
@@ -37,7 +35,7 @@ User.removeAward = (userId, awardId)=> {
 User.assignMentor = (menteeId, mentorName)=> {
 	return User.findOne({ where: { id: menteeId }}).then(mentee=> {
 		return User.findOne({ where: { name: mentorName }}).then(mentor=> {
-			mentee.setMentor(mentor);
+			return mentee.setMentor(mentor);
 		})
 	})
 }

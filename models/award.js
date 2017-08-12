@@ -8,8 +8,8 @@ const Award = conn.define('award', {
 	}
 })
 
-Award.getAwards = user=> {
-	return this.findAll({ where: { userId: user.id }});
+Award.getAwards = userId=> {
+	return Award.findAll({ where: { userId: userId }});
 }
 
 Award.createAward = user=> {

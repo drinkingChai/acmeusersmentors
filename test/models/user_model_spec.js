@@ -1,5 +1,7 @@
 const expect = require('chai').expect;
-const User = require('../../models').User;
+const conn = require('../../models');
+const User = conn.models.User;
+const Award = conn.models.Award;
 
 describe('User model', ()=> {
 	/*
@@ -11,90 +13,112 @@ describe('User model', ()=> {
 		- a key part of this is removing a users mentees if their award count falls below 2.
 	*/
 
+	let allUsers, allAwards;
 	beforeEach(()=> {
-		let allUsers;
-		return User.sync();
+		return conn.sync()
+			.then(()=> conn.seed())
+			.then(()=> User.findAll({ order: ['id'] }))
+			.then(users=> {
+				allUsers = users;
+				return Award.findAll()
+			}).then(awards=> {
+				allAwards = awards;
+			})
 	})
 
 
-	describe('User model exists', ()=> {
-		it('Expects the model to exist', ()=> {
-			return expect(User).to.be.ok();
-		})
+	it('User model exists', ()=> {
+		return expect(User).to.be.ok;
 	})
 
 
 	describe('Create and delete users', ()=> {
-		it('Creates an user', ()=> {
-			// User.createNewUser('Harry')
-			// 	.then(user=> {
-			// 		expect(user.name).to.be('Harry');
-			// 	})
+		it('creates an user', ()=> {
+			return User.create({ name: 'Harry' })
+				.then(()=> User.findOne({ where: { name: 'Harry' }}))
+				.then(user=> {
+					expect(user.name).to.equal('Harry');
+					expect(user.name).to.not.equal('Bob');
+				})
 		})
 
-		it('Lists all users', ()=> {
-			
+		it('lists all users', ()=> {
+			return User.findAll().then(users=> {
+				expect(users.length).to.equal(3);
+				expect(users.length).to.not.equal(1);
+			})
 		})
 
-		it('Delets an user', ()=> {
-
+		it('deletes an user', ()=> {
+			return User.findOne({ where: { name: 'Bob' }})
+				.then(user=> user.destroy())
+				.then(()=> User.findAll())
+				.then(users=> {
+					let usernames = users.map(user=> user.name);
+					expect(users.length).to.equal(2);
+					expect(usernames).to.not.include('Bob');
+				})
 		})
 	})
 
 
 	describe('Create and delete awards', ()=> {
-		it('Creates an award', ()=> {
-
+		it('creates an award', ()=> {
+			return User.giveAward(allUsers[0].id)
+				.then(()=> Award.getAwards(allUsers[0].id))
+				.then(awards=> {
+					expect(awards.length).to.equal(3);
+					expect(awards.length).to.not.equal(1);
+				});
 		})
 
-		it('Lists all awards for a user', ()=> {
-
+		it('lists all awards for a user', ()=> {
+			return Award.getAwards(allUsers[0].id)
+				.then(awards=> {
+					expect(awards.length).to.equal(2);
+				})
 		})
 
-		it('Deletes an award', ()=> {
+		it('deletes an award', ()=> {
+			let user = allUsers[0],
+				userAwards = allAwards.filter(award=>user.id == award.userId);
 
+			return User.removeAward(user.id, userAwards[0].id)
+				.then(()=> Award.getAwards(user.id))
+				.then(awards=> {
+					expect(awards.length).to.equal(1);
+					expect(awards.length).to.not.equal(3);
+				})
 		})
 	})
 
 
 	describe('Add and remove mentors', ()=> {
-		it('Adds a mentor to a user', ()=> {
+		it('assign a mentor to a user', ()=> {
 
 		})
 
-		it('Adds multiple mentors to a user', ()=> {
+		it('list all mentors', ()=> {
 
 		})
 
-		it('List all mentors', ()=> {
+		it('removes a mentor to a user', ()=> {
 
 		})
 
-		it('List all mentors for a user', ()=> {
-
-		})
-
-		it('Removes a mentor to a user', ()=> {
-
-		})
-
-		it("Can't mentor themselves", ()=> {
+		it("can't mentor themselves", ()=> {
 
 		})
 	})
 
 
 	describe('Test business plan', ()=> {
-		describe('Promote and demote a user', ()=> {
-			it('Promote a user', ()=> {
+		describe('User', ()=> {
+			it('is a mentor', ()=> {
 				
 			})
 
-			it('Demote a user', ()=> {
-
-			})
-
-			it('Demotes if the user has less than 2 awards', ()=> {
+			it('remove mentor from user if mentor has less than 2 awards', ()=> {
 
 			})
 		})

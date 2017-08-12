@@ -24,8 +24,6 @@ const seed = ()=> {
 			Award.createAward(users[1]),
 			Award.createAward(users[2])
 		])
-	}).then(()=> {
-		return User.assignMentor(2, 'Bob');
 	})
 }
 
