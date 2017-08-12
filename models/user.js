@@ -6,18 +6,17 @@ const User = conn.define('user', {
 		type: conn.Sequelize.STRING,
 		allowNull: false
 	}
-}, {
-	isMentor() {
-		return Award.getAward(this).then(awards=> {
-			return awards.length >= 2 ? true : false;
-		})
-	}
 })
 
+User.prototype.isMentor = function () {
+	return Award.getAwards(this.id)
+		.then(awards=> {
+			return awards.length >= 2 ? this : false;
+		})
+};
+
 User.giveAward = id=> {
-	return User.findOne({ where: { id: id }}).then(user=> {
-		Award.createAward(user);
-	})
+	return User.findOne({ where: { id: id }}).then(user=> Award.createAward(user));
 }
 
 User.removeAward = (userId, awardId)=> {
@@ -37,9 +36,23 @@ User.removeAward = (userId, awardId)=> {
 User.assignMentor = (menteeId, mentorName)=> {
 	return User.findOne({ where: { id: menteeId }}).then(mentee=> {
 		return User.findOne({ where: { name: mentorName }}).then(mentor=> {
-			mentee.setMentor(mentor);
+			if (mentor.id == mentee.id) throw new Error('Cannot mentor themselves');
+			return mentee.setMentor(mentor);
 		})
 	})
+}
+
+User.removeMentor = id=> {
+	return User.findOne({ where: { id: id }})
+		.then(user=> user.setMentor(null))
+}
+
+User.listMentors = ()=> {
+	return User.findAll()
+		.then(users=> Promise.all(users.map(user=> user.isMentor())))
+		.then(mentors=> {
+			return mentors.filter(mentor=> mentor);
+		})
 }
 
 
