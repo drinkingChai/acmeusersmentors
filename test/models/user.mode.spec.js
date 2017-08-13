@@ -18,8 +18,11 @@ describe('Test user model', ()=> {
   let allUsers, bob, mary, susan;
   beforeEach(()=> {
     return conn.sync()
-    .then(()=> conn.seed())
-    .then(()=> User.findAll())
+    .then(()=> Promise.all([
+  		User.create({ name: 'Bob' }),
+  		User.create({ name: 'Mary' }),
+  		User.create({ name: 'Susan' })
+  	])).then(()=> User.findAll())
     .then(users=> {
       bob = users.find(user=> user.name == 'Bob');
       mary = users.find(user=> user.name == 'Mary');
@@ -34,8 +37,8 @@ describe('Test user model', ()=> {
         User.generateAward(bob.id),
         User.generateAward(bob.id),
         User.generateAward(susan.id),
-        User.updateUserFromRequestBody(bob.id, { action: 'assign', id: mary.id }),
-        User.updateUserFromRequestBody(bob.id, { action: 'assign', id: susan.id })
+        User.updateUserFromRequestBody(mary.id, { mentor_id: bob.id }),
+        User.updateUserFromRequestBody(susan.id, { mentor_id: bob.id })
       ])
     })
 
@@ -66,20 +69,20 @@ describe('Test user model', ()=> {
 
   describe('assign and remove mentor', ()=> {
     it('assigns a mentor', ()=> {
-      return User.updateUserFromRequestBody(bob.id, { action: 'assign', id: mary.id })
+      return User.updateUserFromRequestBody(mary.id, { mentor_id: bob.id })
       .then(()=> User.findOne({ where: { id: mary.id }}))
       .then(user=> expect(user.mentorId).to.equal(bob.id));
     })
 
     it('removes a mentor', ()=> {
-      return User.updateUserFromRequestBody(null, { action: 'remove', id: mary.id })
+      return User.updateUserFromRequestBody(mary.id, {})
       .then(()=> User.findOne({ where: { id: mary.id }}))
       .then(user=> expect(user.mentorId).to.be.null);
     })
 
     // cannot mentor themselves
     it('cant assign self as mentor', ()=> {
-      expect(User.updateUserFromRequestBody(bob.id, { action: 'assign', id: bob.id })).to.be.an('error');
+      expect(User.updateUserFromRequestBody(bob.id, { mentor_id: bob.id })).to.be.an('error');
     })
   })
 

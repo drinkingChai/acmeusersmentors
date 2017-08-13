@@ -29,17 +29,17 @@ User.destroyById = (id)=> {
 
 User.updateUserFromRequestBody = (id, data)=> {
 	// assign and remove mentor
-	if (data.action == 'assign') {
-		if (id == data.id) return new Error('Cant assign mentor to onself');
-		return User.findOne({ where: { id: id }})
+	if (data.mentor_id) {
+		if (id == data.mentor_id) return new Error('Cant assign mentor to onself');
+		return User.findOne({ where: { id: data.mentor_id }})
 		.then(mentor=> {
-			return User.findOne({ where: { id: data.id }})
+			return User.findOne({ where: { id: id }})
 			.then(mentee=> {
 				return mentee.setMentor(mentor);
 			})
 		})
 	} else {
-		return User.findOne({ where: { id: data.id }})
+		return User.findOne({ where: { id: id }})
 		.then(user=> user.setMentor(null));
 	}
 }
