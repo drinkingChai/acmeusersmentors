@@ -7,26 +7,16 @@ Award.belongsTo(User);
 User.hasMany(Award);
 
 User.belongsTo(User, { as: 'mentor' });
-User.hasMany(User, { as: 'mentee', foreignKey: 'mentorId' });
-
+// User.hasMany(User, { as: 'mentee', foreignKey: 'mentorId' });
 
 
 const seed = ()=> {
 	return Promise.all([
-		User.create({ name: 'Bob' }),
-		User.create({ name: 'Susan' }),
-		User.create({ name: 'Lea' })
-	]).then(users=> {
-		return Promise.all([
-			Award.createAward(users[0]),
-			Award.createAward(users[0]),
-			Award.createAward(users[1]),
-			Award.createAward(users[1]),
-			Award.createAward(users[2]),
-		])
-	})
+		User.create({ name: 'Tom' }),
+		User.create({ name: 'Dick' }),
+		User.create({ name: 'Harry' })
+	]);
 }
-
 
 
 const sync = ()=> {
