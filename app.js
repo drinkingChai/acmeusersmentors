@@ -13,11 +13,16 @@ app.set('view engine', 'html');
 app.engine('html', nunjucks.render);
 nunjucks.configure('views', { noCache: true });
 
-
+app.use(methodOverride('_method'));
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(users);
 
+app.get('/', (req, res)=> res.redirect('/users'))
+app.use('/users', users);
+
+app.use((err, req, res, next)=> {
+  res.render('error', { error: err });
+})
 
 const port = process.env.PORT || 3000;
 

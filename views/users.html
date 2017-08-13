@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+{% for user in users %}
+  <li>{{user.name}}</li>
+  <form class="" action="users/{{user.id}}?_method=DELETE" method="POST">
+    <input type="submit" name="" value="delete">
+  </form>
+
+  <form class="" action="users/{{user.id}}/awards" method="POST">
+    <input type="submit" name="" value="generate award">
+  </form>
+
+  <li>Mentor: {{user.mentor.name}}</li>
+
+  <ul class="awards">
+    {% for award in user.awards %}
+    <li>{{award.phrase}}</li>
+    <form class="" action="users/{{user.id}}/awards/{{award.id}}?_method=DELETE" method="POST">
+      <input type="submit" name="" value="delete">
+    </form>
+    {% endfor %}
+  </ul>
+
+  <form class="" action="users/{{user.id}}?_method=PUT" method="POST">
+    <input type="submit" name="" value="Remove mentor">
+  </form>
+
+  <form class="" action="users/{{user.id}}?_method=PUT" method="POST">
+    <select name="mentor_id">
+      {% for mentor in mentors %}
+      <option value="{{mentor.id}}">{{mentor.name}}</option>
+      {% endfor %}
+    </select>
+    <input type="submit" name="" value="Add mentor">
+  </form>
+
+  <br>
+  <br>
+  <br>
+  
+{% endfor %}
+
+{% endblock %}

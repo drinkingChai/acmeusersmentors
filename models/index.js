@@ -15,7 +15,16 @@ const seed = ()=> {
 		User.create({ name: 'Bob' }),
 		User.create({ name: 'Mary' }),
 		User.create({ name: 'Susan' })
-	]);
+	]).then(users=> {
+    bob = users[0];
+    mary = users[1];
+    susan = users[2];
+    User.generateAward(bob.id),
+    User.generateAward(bob.id),
+    User.generateAward(susan.id),
+    User.updateUserFromRequestBody(bob.id, { action: 'assign', id: mary.id }),
+    User.updateUserFromRequestBody(bob.id, { action: 'assign', id: susan.id })
+  })
 }
 
 
