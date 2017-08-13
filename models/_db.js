@@ -3,4 +3,4 @@ const conn = new Sequelize(process.env.DATABASE_URL, { logging: false });
 
 module.exports = conn;
 
-console.log('test');
+  console.log('test');
