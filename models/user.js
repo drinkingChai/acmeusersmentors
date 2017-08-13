@@ -8,6 +8,20 @@ const User = conn.define('user', {
 	}
 })
 
+User.findUsersViewModel = ()=> {
+  let users, mentors = [];
+  return User.findAll({ include: [
+    { model: User, as: 'mentor' },
+    { model: Award }
+  ]}).then(users=> {
+    users = users;
+    users.forEach(user=> {
+      if (user.awards.length >= 2) mentors.push(user);
+    })
+    return { users, mentors };
+  })
+}
+
 User.destroyById = (id)=> {
 	return User.findOne({ where: { id: id }})
 	.then(user=> user.destroy());
