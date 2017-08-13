@@ -8,52 +8,46 @@ const User = conn.define('user', {
 	}
 })
 
-User.prototype.isMentor = function () {
-	return Award.getAwards(this.id)
-		.then(awards=> {
-			return awards.length >= 2 ? this : false;
-		})
-};
-
-User.giveAward = id=> {
-	return User.findOne({ where: { id: id }}).then(user=> Award.createAward(user));
+User.destroyById = (id)=> {
+	return User.findOne({ where: { id: id }})
+	.then(user=> user.destroy());
 }
 
-User.removeAward = (userId, awardId)=> {
-	return Award.deleteAward(awardId).then(awards=> {
+User.updateUserFromRequestBody = (id, data)=> {
+	// assign and remove mentor
+	if (data.action == 'assign') {
+		if (id == data.id) return new Error('Cant assign mentor to onself');
+		return User.findOne({ where: { id: id }})
+		.then(mentor=> {
+			return User.findOne({ where: { id: data.id }})
+			.then(mentee=> {
+				return mentee.setMentor(mentor);
+			})
+		})
+	} else {
+		return User.findOne({ where: { id: data.id }})
+		.then(user=> user.setMentor(null));
+	}
+}
+
+User.generateAward = (id)=> {
+	return User.findOne({ where: { id: id }})
+	.then(user=> Award.makeOne(user));
+}
+
+User.removeAward = (id, awardId)=> {
+	return Award.findOne({ where: { id: awardId }})
+	.then(award=> award.destroy())
+	.then(()=> Award.findAll({ where: { userId: id }}))
+	.then(awards=> {
 		if (awards.length < 2) {
-			return User.findAll({
-				where: { mentorId: userId },
-			});
+			return User.findAll({ where: { mentorId: id }})
 		}
 	}).then(mentees=> {
-		if (mentees && mentees.length) {
-			return Promise.all(mentees.map(mentee=> mentee.setMentor(null)))
+		if (mentees) {
+			return Promise.all(mentees.map(mentee=> mentee.setMentor(null)));
 		}
 	})
 }
-
-User.assignMentor = (menteeId, mentorName)=> {
-	return User.findOne({ where: { id: menteeId }}).then(mentee=> {
-		return User.findOne({ where: { name: mentorName }}).then(mentor=> {
-			if (mentor.id == mentee.id) throw new Error('Cannot mentor themselves');
-			return mentee.setMentor(mentor);
-		})
-	})
-}
-
-User.removeMentor = id=> {
-	return User.findOne({ where: { id: id }})
-		.then(user=> user.setMentor(null))
-}
-
-User.listMentors = ()=> {
-	return User.findAll()
-		.then(users=> Promise.all(users.map(user=> user.isMentor())))
-		.then(mentors=> {
-			return mentors.filter(mentor=> mentor);
-		})
-}
-
 
 module.exports = User;
