@@ -18,7 +18,10 @@ User.findUsersViewModel = ()=> {
     users.forEach(user=> {
       if (user.awards.length >= 2) mentors.push(user);
     })
-    return { users, mentors };
+    users.forEach(user=> {
+      if (!user.mentor) user.beMentored = mentors.filter(m=> m.id != user.id);
+    })
+    return { users };
   })
 }
 
@@ -32,9 +35,9 @@ User.updateUserFromRequestBody = (id, data)=> {
 	if (data.mentor_id) {
 		if (id == data.mentor_id) return new Error('Cant assign mentor to onself');
 		return User.findOne({ where: { id: data.mentor_id }})
-		.then(mentee=> {
+		.then(mentor=> {
 			return User.findOne({ where: { id: id }})
-			.then(mentor=> {
+			.then(mentee=> {
 				return mentee.setMentor(mentor);
 			})
 		})

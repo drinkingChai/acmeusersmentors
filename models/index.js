@@ -22,8 +22,8 @@ const seed = ()=> {
     User.generateAward(bob.id),
     User.generateAward(bob.id),
     User.generateAward(susan.id),
-    User.updateUserFromRequestBody(bob.id, { action: 'assign', id: mary.id }),
-    User.updateUserFromRequestBody(bob.id, { action: 'assign', id: susan.id })
+    User.updateUserFromRequestBody(mary.id, { mentor_id: bob.id }),
+    User.updateUserFromRequestBody(susan.id, { mentor_id: bob.id })
   })
 }
 
