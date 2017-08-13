@@ -18,7 +18,10 @@ User.findUsersViewModel = ()=> {
     users.forEach(user=> {
       if (user.awards.length >= 2) mentors.push(user);
     })
-    return { users, mentors };
+    users.forEach(user=> {
+      if (!user.mentor) user.beMentored = mentors.filter(m=> m.id != user.id);
+    })
+    return { users };
   })
 }
 
