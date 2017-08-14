@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "DATABASE_URL=postgres://localhost/acmeusersmentors nodemon app.js",
-    "start": "DATABASE_URL=postgres://localhost/acmeusersmentors node app.js"
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
