@@ -4,7 +4,13 @@ const Award = require('./award');
 const User = conn.define('user', {
 	name: {
 		type: conn.Sequelize.STRING,
-		allowNull: false
+		allowNull: false,
+		set(val) {
+			return this.setDataValue('name', val.trim().length > 0 ? val.trim() : null);
+		},
+		get() {
+			return this.getDataValue('name');
+		}
 	}
 })
 
