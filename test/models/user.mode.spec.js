@@ -19,10 +19,10 @@ describe('Test user model', ()=> {
   beforeEach(()=> {
     return conn.sync()
     .then(()=> Promise.all([
-  		User.create({ name: 'Bob' }),
-  		User.create({ name: 'Mary' }),
-  		User.create({ name: 'Susan' })
-  	])).then(()=> User.findAll())
+      User.create({ name: 'Bob' }),
+      User.create({ name: 'Mary' }),
+      User.create({ name: 'Susan' })
+    ])).then(()=> User.findAll())
     .then(users=> {
       bob = users.find(user=> user.name == 'Bob');
       mary = users.find(user=> user.name == 'Mary');
