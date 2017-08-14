@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
+const path = require('path');
 const nunjucks = require('nunjucks');
 const	users = require('./routes');
 const conn = require('./models');
@@ -13,6 +14,7 @@ app.set('view engine', 'html');
 app.engine('html', nunjucks.render);
 nunjucks.configure('views', { noCache: true });
 
+app.use(express.static(path.resolve('public')));
 app.use(methodOverride('_method'));
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));

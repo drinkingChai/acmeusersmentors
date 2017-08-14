@@ -2,49 +2,57 @@
 
 {% block content %}
 
-<form class="" action="users" method="POST">
-  <input type="text" name="name" value="">
-  <input type="submit" name="" value="Add">
-</form>
-
-{% for user in users %}
-  <li>{{user.name}}</li>
-  <form class="" action="users/{{user.id}}?_method=DELETE" method="POST">
-    <input type="submit" name="" value="delete">
-  </form>
-
-  <form class="" action="users/{{user.id}}/awards" method="POST">
-    <input type="submit" name="" value="generate award">
-  </form>
-
-  <li>Mentor: {{user.mentor.name}}</li>
-
-  <ul class="awards">
-    {% for award in user.awards %}
-    <li>{{award.phrase}}</li>
-    <form class="" action="users/{{user.id}}/awards/{{award.id}}?_method=DELETE" method="POST">
-      <input type="submit" name="" value="delete">
+<div class="container">
+  <div class="row">
+    <form class="col-12 add-user" action="users" method="POST">
+      <input type="text" name="name" value="">
+      <input class="btn btn-blue" type="submit" name="" value="Add">
     </form>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    {% for user in users %}
+    <div class="col-3">
+      <div class="user">
+        <h4>{{user.name}}</h4>
+        <form class="" action="users/{{user.id}}?_method=DELETE" method="POST">
+          <input class="btn btn-blue" type="submit" name="" value="Delete">
+        </form>
+
+        <form class="" action="users/{{user.id}}/awards" method="POST">
+          <input class="btn btn-yellow" type="submit" name="" value="Generate award">
+        </form>
+
+        {% if user.mentor %}<span class="mentor">Mentor: {{user.mentor.name}}</span>{% endif %}
+
+        <ul class="awards">
+          {% for award in user.awards %}
+          <li>{{award.phrase}}</li>
+          <form class="" action="users/{{user.id}}/awards/{{award.id}}?_method=DELETE" method="POST">
+            <input class="btn btn-red" type="submit" name="" value="Delete">
+          </form>
+          {% endfor %}
+        </ul>
+
+        <form class="" action="users/{{user.id}}?_method=PUT" method="POST">
+          {% if user.mentor %}
+          <input class="btn btn-red" type="submit" name="" value="Remove mentor">
+          {% elif user.beMentored.length %}
+          <select name="mentor_id">
+            {% for mentor in user.beMentored %}
+            <option value="{{mentor.id}}">{{mentor.name}}</option>
+            {% endfor %}
+          </select>
+          <input class="btn btn-blue" type="submit" name="" value="Add mentor">
+          {% endif %}
+
+        </form>
+      </div>
+    </div>
     {% endfor %}
-  </ul>
-
-  <form class="" action="users/{{user.id}}?_method=PUT" method="POST">
-    {% if user.mentor %}
-      <input type="submit" name="" value="Remove mentor">
-    {% elif user.beMentored.length %}
-      <select name="mentor_id">
-        {% for mentor in user.beMentored %}
-        <option value="{{mentor.id}}">{{mentor.name}}</option>
-        {% endfor %}
-      </select>
-      <input type="submit" name="" value="Add mentor">
-    {% endif %}
-
-  </form>
-
-  <br>
-  <br>
-  <br>
-{% endfor %}
+  </div>
+</div>
 
 {% endblock %}

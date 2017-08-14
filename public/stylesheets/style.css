@@ -1,0 +1,143 @@
+@import url(normalize.css);
+@import url("https://fonts.googleapis.com/css?family=Roboto|Roboto+Slab");
+* {
+  box-sizing: border-box; }
+
+* {
+  font-family: 'Roboto', sans-serif; }
+
+header {
+  background-color: #3f9dff;
+  color: #fff; }
+  header h1 {
+    font-family: 'Roboto Slab', serif; }
+
+.col-1 {
+  float: left;
+  padding-right: 20px;
+  width: 8.33333%;
+  border-radius: 5px; }
+
+.col-2 {
+  float: left;
+  padding-right: 20px;
+  width: 16.66667%;
+  border-radius: 5px; }
+
+.col-3 {
+  float: left;
+  padding-right: 20px;
+  width: 25%;
+  border-radius: 5px; }
+
+.col-4 {
+  float: left;
+  padding-right: 20px;
+  width: 33.33333%;
+  border-radius: 5px; }
+
+.col-5 {
+  float: left;
+  padding-right: 20px;
+  width: 41.66667%;
+  border-radius: 5px; }
+
+.col-6 {
+  float: left;
+  padding-right: 20px;
+  width: 50%;
+  border-radius: 5px; }
+
+.col-7 {
+  float: left;
+  padding-right: 20px;
+  width: 58.33333%;
+  border-radius: 5px; }
+
+.col-8 {
+  float: left;
+  padding-right: 20px;
+  width: 66.66667%;
+  border-radius: 5px; }
+
+.col-9 {
+  float: left;
+  padding-right: 20px;
+  width: 75%;
+  border-radius: 5px; }
+
+.col-10 {
+  float: left;
+  padding-right: 20px;
+  width: 83.33333%;
+  border-radius: 5px; }
+
+.col-11 {
+  float: left;
+  padding-right: 20px;
+  width: 91.66667%;
+  border-radius: 5px; }
+
+.col-12 {
+  float: left;
+  padding-right: 20px;
+  width: 100%;
+  border-radius: 5px; }
+
+.container {
+  width: 90%;
+  margin: 0 auto;
+  padding: 20px 0; }
+
+.row {
+  margin-left: -20px;
+  margin-right: -20px; }
+  .row:after {
+    content: "";
+    display: table;
+    clear: both; }
+
+.text-centered {
+  text-align: center; }
+
+.add-user, .user {
+  background-color: #eaeaea;
+  padding: 20px;
+  border-radius: 5px; }
+
+.awards {
+  list-style-type: none;
+  padding: 0; }
+
+.mentor {
+  background-color: #AAAAAA;
+  font-weight: bold;
+  color: #2b2b2b;
+  font-size: 14px;
+  padding: 2px 5px;
+  border-radius: 5px; }
+
+.btn {
+  padding: 10px;
+  color: #fff; }
+  .btn-blue {
+    background-color: #0074D9; }
+  .btn-red {
+    background-color: #85144b; }
+  .btn-yellow {
+    background-color: #FF851B;
+    color: #111111; }
+
+input {
+  margin: 10px 0;
+  background-color: #fff;
+  border: 0;
+  border-radius: 5px; }
+
+input[type=text] {
+  width: 100%;
+  padding: 10px;
+  border: solid 1px #AAAAAA; }
+
+input[type=submit] {
+  display: block; }
