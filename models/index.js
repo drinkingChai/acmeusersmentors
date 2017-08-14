@@ -11,11 +11,11 @@ User.hasMany(User, { as: 'mentees', foreignKey: 'mentorId' });
 
 
 const seed = ()=> {
-	return Promise.all([
-		User.create({ name: 'Bob' }),
-		User.create({ name: 'Mary' }),
-		User.create({ name: 'Susan' })
-	]).then(users=> {
+  return Promise.all([
+    User.create({ name: 'Bob' }),
+    User.create({ name: 'Mary' }),
+    User.create({ name: 'Susan' })
+  ]).then(users=> {
     bob = users[0];
     mary = users[1];
     susan = users[2];
@@ -29,15 +29,15 @@ const seed = ()=> {
 
 
 const sync = ()=> {
-	return conn.sync({ force: true });
+  return conn.sync({ force: true });
 }
 
 
 module.exports = {
-	sync,
-	seed,
-	models: {
-		User,
-		Award
-	}
+  sync,
+  seed,
+  models: {
+    User,
+    Award
+  }
 };
